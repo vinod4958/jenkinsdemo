@@ -2,24 +2,47 @@ pipeline {
     agent any
 
     stages {
-        stage('build') {
+        stage('az login') {
             steps {
-                echo 'Build the code'
+                echo 'login to the azure'
+                sh """
+                az login --service-principal -u eecffab5-75cd-4485-a413-440f8bb8a830 -p ixpa3vMm-QFc_f580vFwyPgAHW-WQoO2eT --tenant 00019fc9-044d-41ed-8120-a3e1eb0ec3c4
+                az account set --subscription 74c381f3-13f0-4d1e-a3b8-661c18a3bd93
+                """
             }
         }
-        stage('Test') {
+        stage('Create RG') {
             steps {
-                echo 'test the code'
+                echo 'create the RG'
+                sh """
+                az group create -l westus -n vinc
+                """
             }
         }
-        stage('Unit test') {
+        stage('Create Vnet') {
             steps {
-                echo 'Run unit test'
+                echo 'Create a vnet'
+                sh """
+                az network vnet create --name Vincvnet --resource-group vinc --subnet-name default
+                """
             }
         }
         stage('Deploy') {
             steps {
                 echo 'deploy the code'
+            }
+        }
+
+        post {
+            always {
+                echo 'Build completed'
+            }
+            success {
+                echo 'Build was successfull'
+                
+            }
+            failure {
+                echo 'Build was failed'
             }
         }
     }
