@@ -33,17 +33,6 @@ pipeline {
             }
         }
 
-        post {
-            always {
-                echo 'Build completed'
-            }
-            success {
-                echo 'Build was successfull'
-                
-            }
-            failure {
-                echo 'Build was failed'
-            }
-        }
+        
     }
 }
